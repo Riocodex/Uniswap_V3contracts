@@ -27,4 +27,12 @@ contract LiquidityExamples is IERC721Receiver {
     }
 
     mapping(uint256 => Deposit) public deposits;
+
+    constructor(
+        INonfungiblePositionManager _nonfungiblePositionManager,
+        address _factory,
+        address _WETH9
+    ) PeripheryImmutableState(_factory, _WETH9) {
+        nonfungiblePositionManager = _nonfungiblePositionManager;
+    }
 }
