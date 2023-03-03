@@ -29,6 +29,7 @@ contract MultihopSwapExample{
     /// @dev The calling address must approve this contract to spend at least `amountIn` worth of its DAI for this function to succeed.
     /// @param amountIn The amount of DAI to be swapped.
     /// @return amountOut The amount of WETH9 received after the swap.
+
     function swapExactInputMultihop(uint256 amountIn) external returns (uint256 amountOut) {
         // Transfer `amountIn` of DAI to this contract.
         TransferHelper.safeTransferFrom(DAI, msg.sender, address(this), amountIn);
@@ -50,5 +51,41 @@ contract MultihopSwapExample{
 
         // Executes the swap.
         amountOut = swapRouter.exactInput(params);
+    }
+
+        /// @notice swapExactOutputMultihop swaps a minimum possible amount of DAI for a fixed amount of WETH through an intermediary pool.
+    /// For this example, we want to swap DAI for WETH9 through a USDC pool but we specify the desired amountOut of WETH9. Notice how the path encoding is slightly different in for exact output swaps.
+    /// @dev The calling address must approve this contract to spend its DAI for this function to succeed. As the amount of input DAI is variable,
+    /// the calling address will need to approve for a slightly higher amount, anticipating some variance.
+    /// @param amountOut The desired amount of WETH9.
+    /// @param amountInMaximum The maximum amount of DAI willing to be swapped for the specified amountOut of WETH9.
+    /// @return amountIn The amountIn of DAI actually spent to receive the desired amountOut.
+    function swapExactOutputMultihop(uint256 amountOut, uint256 amountInMaximum) external returns (uint256 amountIn) {
+        // Transfer the specified `amountInMaximum` to this contract.
+        TransferHelper.safeTransferFrom(DAI, msg.sender, address(this), amountInMaximum);
+        // Approve the router to spend  `amountInMaximum`.
+        TransferHelper.safeApprove(DAI, address(swapRouter), amountInMaximum);
+
+        // The parameter path is encoded as (tokenOut, fee, tokenIn/tokenOut, fee, tokenIn)
+        // The tokenIn/tokenOut field is the shared token between the two pools used in the multiple pool swap. In this case USDC is the "shared" token.
+        // For an exactOutput swap, the first swap that occurs is the swap which returns the eventual desired token.
+        // In this case, our desired output token is WETH9 so that swap happens first, and is encoded in the path accordingly.
+        ISwapRouter.ExactOutputParams memory params =
+            ISwapRouter.ExactOutputParams({
+                path: abi.encodePacked(WETH9, poolFee, USDC, poolFee, DAI),
+                recipient: msg.sender,
+                deadline: block.timestamp,
+                amountOut: amountOut,
+                amountInMaximum: amountInMaximum
+            });
+
+        // Executes the swap, returning the amountIn actually spent.
+        amountIn = swapRouter.exactOutput(params);
+
+        // If the swap did not require the full amountInMaximum to achieve the exact amountOut then we refund msg.sender and approve the router to spend 0.
+        if (amountIn < amountInMaximum) {
+            TransferHelper.safeApprove(DAI, address(swapRouter), 0);
+            TransferHelper.safeTransferFrom(DAI, address(this), msg.sender, amountInMaximum - amountIn);
+        }
     }
 }
