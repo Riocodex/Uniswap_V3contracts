@@ -35,4 +35,15 @@ contract LiquidityExamples is IERC721Receiver {
     ) PeripheryImmutableState(_factory, _WETH9) {
         nonfungiblePositionManager = _nonfungiblePositionManager;
     }
+
+    function onERC721Received(
+        address operator,
+        address,
+        uint256 tokenId,
+        bytes calldata
+    ) external override returns (bytes4) {
+        // get position information
+        _createDeposit(operator, tokenId);
+        return this.onERC721Received.selector;
+    }
 }
