@@ -23,4 +23,32 @@ contract MultihopSwapExample{
     constructor(ISwapRouter _swapRouter) {
         swapRouter = _swapRouter;
     }
+
+        /// @notice swapExactInputMultihop swaps a fixed amount of DAI for a maximum possible amount of WETH9 through an intermediary pool.
+    /// For this example, we will swap DAI to USDC, then USDC to WETH9 to achieve our desired output.
+    /// @dev The calling address must approve this contract to spend at least `amountIn` worth of its DAI for this function to succeed.
+    /// @param amountIn The amount of DAI to be swapped.
+    /// @return amountOut The amount of WETH9 received after the swap.
+    function swapExactInputMultihop(uint256 amountIn) external returns (uint256 amountOut) {
+        // Transfer `amountIn` of DAI to this contract.
+        TransferHelper.safeTransferFrom(DAI, msg.sender, address(this), amountIn);
+
+        // Approve the router to spend DAI.
+        TransferHelper.safeApprove(DAI, address(swapRouter), amountIn);
+
+        // Multiple pool swaps are encoded through bytes called a `path`. A path is a sequence of token addresses and poolFees that define the pools used in the swaps.
+        // The format for pool encoding is (tokenIn, fee, tokenOut/tokenIn, fee, tokenOut) where tokenIn/tokenOut parameter is the shared token across the pools.
+        // Since we are swapping DAI to USDC and then USDC to WETH9 the path encoding is (DAI, 0.3%, USDC, 0.3%, WETH9).
+        ISwapRouter.ExactInputParams memory params =
+            ISwapRouter.ExactInputParams({
+                path: abi.encodePacked(DAI, poolFee, USDC, poolFee, WETH9),
+                recipient: msg.sender,
+                deadline: block.timestamp,
+                amountIn: amountIn,
+                amountOutMinimum: 0
+            });
+
+        // Executes the swap.
+        amountOut = swapRouter.exactInput(params);
+    }
 }
