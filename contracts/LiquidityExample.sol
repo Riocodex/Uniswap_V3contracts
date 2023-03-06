@@ -187,5 +187,24 @@ contract LiquidityExamples is IERC721Receiver {
         //send liquidity back to owner
         _sendToOwner(tokenId, amount0, amount1);
     }
+
+        /// @notice Transfers funds to owner of NFT
+    /// @param tokenId The id of the erc721
+    /// @param amount0 The amount of token0
+    /// @param amount1 The amount of token1
+    function _sendToOwner(
+        uint256 tokenId,
+        uint256 amount0,
+        uint256 amount1
+    ) internal {
+        // get owner of contract
+        address owner = deposits[tokenId].owner;
+
+        address token0 = deposits[tokenId].token0;
+        address token1 = deposits[tokenId].token1;
+        // send collected fees to owner
+        TransferHelper.safeTransfer(token0, owner, amount0);
+        TransferHelper.safeTransfer(token1, owner, amount1);
+    }
         
 }
