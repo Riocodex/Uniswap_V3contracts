@@ -45,8 +45,8 @@ contract SingleSwapExample{
         // We also set the sqrtPriceLimitx96 to be 0 to ensure we swap our exact input amount.
         ISwapRouter.ExactInputSingleParams memory params =
             ISwapRouter.ExactInputSingleParams({
-                tokenIn: DAI,
-                tokenOut: WETH9,
+                tokenIn: WETH9,
+                tokenOut: DAI,
                 fee: poolFee,
                 recipient: msg.sender,
                 deadline: block.timestamp,
