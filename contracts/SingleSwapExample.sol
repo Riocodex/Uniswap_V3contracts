@@ -36,10 +36,10 @@ contract SingleSwapExample{
         // msg.sender must approve this contract
 
         // Transfer the specified amount of DAI to this contract.
-        TransferHelper.safeTransferFrom(DAI, msg.sender, address(this), amountIn);
+        TransferHelper.safeTransferFrom(WETH9, msg.sender, address(this), amountIn);
 
         // Approve the router to spend DAI.
-        TransferHelper.safeApprove(DAI, address(swapRouter), amountIn);
+        TransferHelper.safeApprove(WETH9, address(swapRouter), amountIn);
 
         // Naively set amountOutMinimum to 0. In production, use an oracle or other data source to choose a safer value for amountOutMinimum.
         // We also set the sqrtPriceLimitx96 to be 0 to ensure we swap our exact input amount.
