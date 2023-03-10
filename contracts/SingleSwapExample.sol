@@ -13,7 +13,7 @@ contract SingleSwapExample{
     // It should be noted that for the sake of these examples, we purposefully pass in the swap router instead of inherit the swap router for simplicity.
     // More advanced example contracts will detail how to inherit the swap router safely.
 
-    ISwapRouter public immutable swapRouter;
+    ISwapRouter public constant swapRouter = ISwapRouter(0xE592427A0AEce92De3Edee1F18E0157C05861564);
 
     // This example swaps DAI/WETH9 for single path swaps and DAI/USDC/WETH9 for multi path swaps.
 
