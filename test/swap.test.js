@@ -16,7 +16,7 @@ describe("SwapExamples", () => {
     before(async () => {
       accounts = await ethers.getSigners(1)
   
-      const SwapExamples = await ethers.getContractFactory("SingleSwamExample.sol")
+      const SwapExamples = await ethers.getContractFactory("SingleSwapExample.sol")
       swapExamples = await SwapExamples.deploy()
       await swapExamples.deployed()
   
