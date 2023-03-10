@@ -94,8 +94,8 @@ contract SwapExamples{
         // For exact output swaps, the amountInMaximum may not have all been spent.
         // If the actual amount spent (amountIn) is less than the specified maximum amount, we must refund the msg.sender and approve the swapRouter to spend 0.
         if (amountIn < amountInMaximum) {
-            TransferHelper.safeApprove(DAI, address(swapRouter), 0);
-            TransferHelper.safeTransfer(DAI, msg.sender, amountInMaximum - amountIn);
+            TransferHelper.safeApprove(WETH9, address(swapRouter), 0);
+            TransferHelper.safeTransfer(WETH9, msg.sender, amountInMaximum - amountIn);
         }
     }
 }
