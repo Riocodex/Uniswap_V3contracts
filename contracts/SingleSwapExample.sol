@@ -24,9 +24,7 @@ contract SingleSwapExample{
     // For this example, we will set the pool fee to 0.3%.
     uint24 public constant poolFee = 3000;
 
-    constructor(ISwapRouter _swapRouter) {
-        swapRouter = _swapRouter;
-    }
+   
 
     /// @notice swapExactInputSingle swaps a fixed amount of DAI for a maximum possible amount of WETH9
     /// using the DAI/WETH9 0.3% pool by calling `exactInputSingle` in the swap router.
