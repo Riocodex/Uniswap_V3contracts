@@ -10,8 +10,23 @@ describe("SwapExamples", function(){
     it("swapExactInputSingle", async function () {
         const accounts = await ethers.getSigners()
 
+        const weth = await ethers.getContractAt("IWETH",WETH9)
+        const dai = await ethers.getContractAt("IERC20",DAI)
+
         const SwapExamples = await ethers.getContractFactory("SwapExamples")
         const swapExamples = await SwapExamples.deploy()
         await swapExamples.deployed()
+
+        //amount of weth depositing
+        const amountIn = 10n ** 18n
+        
+        await weth.connect(accounts[0]).deposit({ value: amountIn })
+        await weth.connect(accounts[0]).deposit(swapExample.address, amountIn)
+
+        await swapExamples.swapExactInputSingle(amountIn)
+
+        console.log("DAI balance", await dai.balanceOf(accounts[0]).address);
+
+
     })
 })
