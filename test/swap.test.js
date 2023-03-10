@@ -38,4 +38,18 @@ describe("SwapExamples", () => {
     console.log("DAI balance", await dai.balanceOf(accounts[0].address))
   })
 
+  it("swapExactOutputSingle", async () => {
+    const wethAmountInMax = 10n ** 18n
+    const daiAmountOut = 100n * 10n ** 18n
+
+    // Deposit WETH
+    await weth.deposit({ value: wethAmountInMax })
+    await weth.approve(swapExamples.address, wethAmountInMax)
+
+    // Swap
+    await swapExamples.swapExactOutputSingle(daiAmountOut,wethAmountInMax)
+
+    console.log("DAI balance", await dai.balanceOf(accounts[0].address))
+  })
+
 })
