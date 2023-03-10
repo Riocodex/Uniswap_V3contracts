@@ -63,23 +63,23 @@ contract SwapExamples{
     /// @notice swapExactOutputSingle swaps a minimum possible amount of DAI for a fixed amount of WETH.
     /// @dev The calling address must approve this contract to spend its DAI for this function to succeed. As the amount of input DAI is variable,
     /// the calling address will need to approve for a slightly higher amount, anticipating some variance.
-    /// @param amountOut The exact amount of WETH9 to receive from the swap.
-    /// @param amountInMaximum The amount of DAI we are willing to spend to receive the specified amount of WETH9.
+    /// @param amountOut The exact amount of DAI to receive from the swap.
+    /// @param amountInMaximum The amount of WETH9 we are willing to spend to receive the specified amount of WETH9.
     /// @return amountIn The amount of DAI actually spent in the swap.
 
 
     function swapExactOutputSingle(uint256 amountOut, uint256 amountInMaximum) external returns (uint256 amountIn) {
-        // Transfer the specified amount of DAI to this contract.
-        TransferHelper.safeTransferFrom(DAI, msg.sender, address(this), amountInMaximum);
+        // Transfer the specified amount of WETH to this contract.
+        TransferHelper.safeTransferFrom(WETH9, msg.sender, address(this), amountInMaximum);
 
-        // Approve the router to spend the specifed `amountInMaximum` of DAI.
+        // Approve the router to spend the specifed `amountInMaximum` of wETH.
         // In production, you should choose the maximum amount to spend based on oracles or other data sources to acheive a better swap.
-        TransferHelper.safeApprove(DAI, address(swapRouter), amountInMaximum);
+        TransferHelper.safeApprove(WETH9, address(swapRouter), amountInMaximum);
 
         ISwapRouter.ExactOutputSingleParams memory params =
             ISwapRouter.ExactOutputSingleParams({
-                tokenIn: DAI,
-                tokenOut: WETH9,
+                tokenIn: WETH9,
+                tokenOut: DAI,
                 fee: poolFee,
                 recipient: msg.sender,
                 deadline: block.timestamp,
