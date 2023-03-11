@@ -21,7 +21,7 @@ contract SwapExamples{
 
    
 
-    
+    //swap WETH --> DAI
     function swapExactInputSingle(uint256 amountIn) external returns (uint256 amountOut) {
         
         TransferHelper.safeTransferFrom(WETH9, msg.sender, address(this), amountIn);
@@ -101,16 +101,17 @@ contract SwapExamples{
         amountOut = swapRouter.exactInput(params);
     }
 
+    // swap WETH --> USDC --> DAI
     function swapExactOutputMultihop(uint256 amountOut, uint256 amountInMaximum) external returns (uint256 amountIn) {
         
-        TransferHelper.safeTransferFrom(DAI, msg.sender, address(this), amountInMaximum);
+        TransferHelper.safeTransferFrom(WETH9, msg.sender, address(this), amountInMaximum);
      
-        TransferHelper.safeApprove(DAI, address(swapRouter), amountInMaximum);
+        TransferHelper.safeApprove(WETH9, address(swapRouter), amountInMaximum);
 
       
         ISwapRouter.ExactOutputParams memory params =
             ISwapRouter.ExactOutputParams({
-                path: abi.encodePacked(WETH9, poolFee, USDC, poolFee, DAI),
+                path: abi.encodePacked(DAI, uint24(100), USDC, uint24(3000), WETH9),
                 recipient: msg.sender,
                 deadline: block.timestamp,
                 amountOut: amountOut,
@@ -121,8 +122,8 @@ contract SwapExamples{
         amountIn = swapRouter.exactOutput(params);
 
         if (amountIn < amountInMaximum) {
-            TransferHelper.safeApprove(DAI, address(swapRouter), 0);
-            TransferHelper.safeTransferFrom(DAI, address(this), msg.sender, amountInMaximum - amountIn);
+            TransferHelper.safeApprove(WETH9, address(swapRouter), 0);
+            TransferHelper.safeTransferFrom(WETH9, address(this), msg.sender, amountInMaximum - amountIn);
         }
     }
 }
