@@ -78,17 +78,19 @@ contract SwapExamples{
         }
     }
 
+    // swap WETH --> USDC --> DAI
+
     function swapExactInputMultihop(uint256 amountIn) external returns (uint256 amountOut) {
-        
-        TransferHelper.safeTransferFrom(DAI, msg.sender, address(this), amountIn);
+         
+        TransferHelper.safeTransferFrom(WETH9, msg.sender, address(this), amountIn);
 
         
-        TransferHelper.safeApprove(DAI, address(swapRouter), amountIn);
+        TransferHelper.safeApprove(WETH9, address(swapRouter), amountIn);
 
- 
+ //Note check https://info.uniswap.org/#/pools to know the specific pool fee to put in token trades
         ISwapRouter.ExactInputParams memory params =
             ISwapRouter.ExactInputParams({
-                path: abi.encodePacked(DAI, poolFee, USDC, poolFee, WETH9),
+                path: abi.encodePacked(WETH9, uint24(3000), USDC, uint24(100), DAI),
                 recipient: msg.sender,
                 deadline: block.timestamp,
                 amountIn: amountIn,
