@@ -77,4 +77,50 @@ contract SwapExamples{
             TransferHelper.safeTransfer(WETH9, msg.sender, amountInMaximum - amountIn);
         }
     }
+
+    function swapExactInputMultihop(uint256 amountIn) external returns (uint256 amountOut) {
+        
+        TransferHelper.safeTransferFrom(DAI, msg.sender, address(this), amountIn);
+
+        
+        TransferHelper.safeApprove(DAI, address(swapRouter), amountIn);
+
+ 
+        ISwapRouter.ExactInputParams memory params =
+            ISwapRouter.ExactInputParams({
+                path: abi.encodePacked(DAI, poolFee, USDC, poolFee, WETH9),
+                recipient: msg.sender,
+                deadline: block.timestamp,
+                amountIn: amountIn,
+                amountOutMinimum: 0
+            });
+
+        // Executes the swap.
+        amountOut = swapRouter.exactInput(params);
+    }
+
+    function swapExactOutputMultihop(uint256 amountOut, uint256 amountInMaximum) external returns (uint256 amountIn) {
+        
+        TransferHelper.safeTransferFrom(DAI, msg.sender, address(this), amountInMaximum);
+     
+        TransferHelper.safeApprove(DAI, address(swapRouter), amountInMaximum);
+
+      
+        ISwapRouter.ExactOutputParams memory params =
+            ISwapRouter.ExactOutputParams({
+                path: abi.encodePacked(WETH9, poolFee, USDC, poolFee, DAI),
+                recipient: msg.sender,
+                deadline: block.timestamp,
+                amountOut: amountOut,
+                amountInMaximum: amountInMaximum
+            });
+
+        
+        amountIn = swapRouter.exactOutput(params);
+
+        if (amountIn < amountInMaximum) {
+            TransferHelper.safeApprove(DAI, address(swapRouter), 0);
+            TransferHelper.safeTransferFrom(DAI, address(this), msg.sender, amountInMaximum - amountIn);
+        }
+    }
 }
