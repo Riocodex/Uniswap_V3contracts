@@ -67,4 +67,19 @@ describe("SwapExamples", () => {
    
   })
 
+  it("swapExactOutputMultihop", async () => {
+    const wethAmountInMax = 10n ** 18n
+    const daiAmountOut = 100n * 10n ** 18n
+
+    // Deposit WETH
+    await weth.deposit({ value: wethAmountInMax })
+    await weth.approve(swapExamples.address, wethAmountInMax)
+
+    // Swap
+    await swapExamples.swapExactOutputMultihop(daiAmountOut,wethAmountInMax)
+
+    console.log("DAI balance", await dai.balanceOf(accounts[0].address))
+    console.log("WETH balance", await weth.balanceOf(accounts[0].address))
+  })
+
 })
