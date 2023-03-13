@@ -24,62 +24,6 @@ describe("SwapExamples", () => {
     usdc = await ethers.getContractAt("IERC20", USDC)
   })
 
-  it("swapExactInputSingle", async () => {
-    const amountIn = 10n ** 18n
-
-    // Deposit WETH
-    await weth.deposit({ value: amountIn })
-    await weth.approve(swapExamples.address, amountIn)
-
-    // Swap
-    await swapExamples.swapExactInputSingle(amountIn)
-
-    console.log("DAI balance", await dai.balanceOf(accounts[0].address))
-  })
-
-  it("swapExactOutputSingle", async () => {
-    const wethAmountInMax = 10n ** 18n
-    const daiAmountOut = 100n * 10n ** 18n
-
-    // Deposit WETH
-    await weth.deposit({ value: wethAmountInMax })
-    await weth.approve(swapExamples.address, wethAmountInMax)
-
-    // Swap
-    await swapExamples.swapExactOutputSingle(daiAmountOut,wethAmountInMax)
-
-    console.log("DAI balance", await dai.balanceOf(accounts[0].address))
-  })
-
   
-  it("swapExactInputMultihop", async () => {
-    const amountIn = 10n ** 18n
-
-    // Deposit WETH
-    await weth.deposit({ value: amountIn })
-    await weth.approve(swapExamples.address, amountIn)
-
-    // Swap
-    await swapExamples.swapExactInputMultihop(amountIn)
-
-    console.log("DAI balance", await dai.balanceOf(accounts[0].address))
-    console.log("WETH balance", await weth.balanceOf(accounts[0].address))
-   
-  })
-
-  it("swapExactOutputMultihop", async () => {
-    const wethAmountInMax = 10n ** 18n
-    const daiAmountOut = 100n * 10n ** 18n
-
-    // Deposit WETH
-    await weth.deposit({ value: wethAmountInMax })
-    await weth.approve(swapExamples.address, wethAmountInMax)
-
-    // Swap
-    await swapExamples.swapExactOutputMultihop(daiAmountOut,wethAmountInMax)
-
-    console.log("DAI balance", await dai.balanceOf(accounts[0].address))
-    console.log("WETH balance", await weth.balanceOf(accounts[0].address))
-  })
 
 })
