@@ -13,15 +13,10 @@ describe("SwapExamples", () => {
 
 
   before(async () => {
-    accounts = await ethers.getSigners(1)
+    accounts = await ethers.getSigners()
 
-    const SwapExamples = await ethers.getContractFactory("SwapExamples")
-    swapExamples = await SwapExamples.deploy()
-    await swapExamples.deployed()
-
-    weth = await ethers.getContractAt("IWETH", WETH9)
     dai = await ethers.getContractAt("IERC20", DAI)
-    usdc = await ethers.getContractAt("IERC20", USDC)
+   
   })
 
   
